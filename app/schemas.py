@@ -15,7 +15,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     first_name: Optional[str]
     last_name: Optional[str]
-    user_type: str
+    user_type: TypeEnum
     date_created: datetime.datetime
 
 class UserUpdate(UserBase):
@@ -28,20 +28,3 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
-
-
-# class UserModel(BaseModel):
-#     id: str
-#     username: str
-#     first_name: Optional[str]
-#     last_name: Optional[str]
-#     user_type: TypeEnum
-#     date_created: datetime.datetime
-
-# class CreateUserRequest(BaseModel):
-#     username: str
-#     user_type: TypeEnum
-
-# class UpdateSongRequest(BaseModel):
-#     first_name: Optional[str]
-#     last_name: Optional[str]

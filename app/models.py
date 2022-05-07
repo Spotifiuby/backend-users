@@ -2,6 +2,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from .database import Base
+from .schemas import TypeEnum
 
 class User(Base):
     """User Class contains standard information for a User."""
@@ -12,20 +13,3 @@ class User(Base):
     first_name = Column(String, default="")
     last_name = Column(String, default="")
     user_type = Column(String)
-    
-
-# class UserModel(BaseModel):
-#     id: str
-#     username: str
-#     first_name: Optional[str]
-#     last_name: Optional[str]
-#     user_type: TypeEnum
-#     date_created: datetime.datetime
-
-# class CreateUserRequest(BaseModel):
-#     username: str
-#     user_type: TypeEnum
-
-# class UpdateSongRequest(BaseModel):
-#     first_name: Optional[str]
-#     last_name: Optional[str]
