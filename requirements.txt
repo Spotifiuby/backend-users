@@ -16,8 +16,8 @@ dbus-python==1.2.18
 distlib==0.3.4
 distro==1.7.0
 Django==3.2.12
-docker==5.0.3
-docker-compose==1.29.2
+docker
+docker-compose
 dockerpty==0.4.1
 docopt==0.6.2
 evdev==1.4.0
