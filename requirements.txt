@@ -94,7 +94,6 @@ systemd-python==234
 texttable==1.6.4
 tomli==2.0.1
 typing_extensions==4.2.0
-ufw==0.36.1
 unattended-upgrades==0.1
 urllib3==1.26.5
 usb-creator==0.3.7
