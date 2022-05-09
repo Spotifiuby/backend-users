@@ -21,9 +21,13 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     first_name: Optional[str]
     last_name: Optional[str]
+    user_type: Optional[TypeEnum]
 
 class User(UserBase):
     id: int
+    first_name: str
+    last_name: str
+    user_type: TypeEnum
     is_active: bool
 
     class Config:
