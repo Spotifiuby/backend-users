@@ -32,7 +32,7 @@ def test_create_user():
     response = client.post(
         "/users/",
         json={
-            "username": "juanb",
+            "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
             "last_name": "Rodriguez",
             "user_type": "listener",
@@ -52,7 +52,7 @@ def test_create_existing_user():
     response = client.post(
         "/users/",
         json={
-            "username": "juanb",
+            "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
             "last_name": "Rodriguez",
             "user_type": "listener",
@@ -60,17 +60,17 @@ def test_create_existing_user():
         },
     )
     assert response.status_code == 400
-    assert response.json() == {"detail": "Username juanb already registered"}
+    assert response.json() == {"detail": "Email jbrodriguez@fi.uba.ar already registered"}
 
 def test_read_inexistentusers():
-    response = client.get('/users/4')
+    response = client.get('/users/inexistentemail@asd.com')
     assert response.status_code == 404
     assert response.json() == {"detail":"User not found"}
 
 def test_read_users():
     response = client.get('/users')
     assert response.status_code == 200
-    assert response.json() == [{"username":"juanb",
+    assert response.json() == [{"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
                                 "first_name": "Juan",
                                 "last_name": "Rodriguez",
@@ -79,9 +79,9 @@ def test_read_users():
                                 }]
         
 def test_read_user():
-    response = client.get('/users/1')
+    response = client.get('/users/jbrodriguez@fi.uba.ar')
     assert response.status_code == 200
-    assert response.json() == {"username":"juanb",
+    assert response.json() == {"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
                                 "first_name": "Juan",
                                 "last_name": "Rodriguez",
@@ -91,22 +91,22 @@ def test_read_user():
 
 def test_update_user():
     response = client.put(
-        "/users/1",
+        "/users/jbrodriguez@fi.uba.ar",
         json={
-            "username": "juanb",
+            "email": "jbrodriguez@fi.uba.ar",
             "user_type": "admin",
         },
     )
     assert response.status_code == 200
-    assert response.json() == {"username":"juanb",
+    assert response.json() == {"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
                                 "first_name": "Juan",
                                 "last_name": "Rodriguez",
                                 "user_type": "admin",
                                 "is_active":True
                                 }
-    get_response = client.get('/users/1')
-    assert response.json() == {"username":"juanb",
+    get_response = client.get('/users/jbrodriguez@fi.uba.ar')
+    assert response.json() == {"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
                                 "first_name": "Juan",
                                 "last_name": "Rodriguez",
@@ -115,7 +115,7 @@ def test_update_user():
                                 }
 
 def test_delete_user():
-    response = client.delete("/users/1")
+    response = client.delete("/users/jbrodriguez@fi.uba.ar")
     assert response.status_code == 204
-    get_response = client.get('/users/1')
+    get_response = client.get('/users/jbrodriguez@fi.uba.ar')
     assert get_response.status_code == 404

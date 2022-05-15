@@ -10,7 +10,7 @@ class TypeEnum(str, Enum):
     listener = "listener"
 
 class UserBase(BaseModel):
-    username: str
+    email: str
 
 class UserCreate(UserBase):
     first_name: Optional[str]
