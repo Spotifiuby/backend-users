@@ -2,7 +2,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     API_KEY: str = ""
-    ENV: str = "development"
+    ENV: str = "Tests"
     DB_USER: str = "bauti"
     DB_PWD: str = "pass"
     DB_HOST: str = "localhost"
