@@ -20,7 +20,7 @@ Now install all the requirements.
 $ pip install -r requirements.txt
 ```
 
-Finally, run the app.
+Finally, run the app. Read [Environment Variables](##environment-variables) section before running this command.
 ```
 $ uvicorn app.main:app --reload
 ```
@@ -36,6 +36,8 @@ To set custom environment variables, ou should add them in the run command.
 $ API_KEY=apikey ENV=development DB_USER=dbuser DB_PWD=dbpwd DB_HOST=dbhost DB_PORT=dbport DB_NAME=dbname uvicorn app.main:app --reload
 ```
 Filling each environment variable with your desired values.
+
+For test purposes you will see that the ENV variable is set to Test by default. And if it's test, the DB will be a file.
 
 # Tests
 For tests and coverage run the following command:
