@@ -1,1 +1,1 @@
-web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
+web: API_KEY=$API_KEY ENV="production" DB_USER=$DB_USER DB_PWD=$DB_PWD DB_HOST=$DB_HOST DB_PORT=$DB_PORT DB_NAME=$DB_NAME gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app

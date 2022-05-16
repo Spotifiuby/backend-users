@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from app.main import app, get_db
+from app.main import app, get_db, get_api_key
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from app.database import Base
@@ -24,13 +24,18 @@ def override_get_db():
     finally:
         db.close()
 
+def override_get_api_key():
+    return "1234"
+
 app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_api_key] = override_get_api_key
 
 client = TestClient(app)
 
 def test_create_user():
     response = client.post(
         "/users/",
+        headers={"Authorization":"1234"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
@@ -44,13 +49,14 @@ def test_create_user():
     assert "id" in response.json()
 
 def test_read_main():
-    response = client.get('/')
+    response = client.get('/', headers={"Authorization":"1234"})
     assert response.status_code == 404
     assert response.json() == {"detail":"Not Found"}
 
 def test_create_existing_user():
     response = client.post(
         "/users/",
+        headers={"Authorization":"1234"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
@@ -63,12 +69,12 @@ def test_create_existing_user():
     assert response.json() == {"detail": "Email jbrodriguez@fi.uba.ar already registered"}
 
 def test_read_inexistentusers():
-    response = client.get('/users/inexistentemail@asd.com')
+    response = client.get('/users/inexistentemail@asd.com', headers={"Authorization":"1234"})
     assert response.status_code == 404
     assert response.json() == {"detail":"User not found"}
 
 def test_read_users():
-    response = client.get('/users')
+    response = client.get('/users', headers={"Authorization":"1234"})
     assert response.status_code == 200
     assert response.json() == [{"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
@@ -79,7 +85,7 @@ def test_read_users():
                                 }]
         
 def test_read_user():
-    response = client.get('/users/jbrodriguez@fi.uba.ar')
+    response = client.get('/users/jbrodriguez@fi.uba.ar', headers={"Authorization":"1234"})
     assert response.status_code == 200
     assert response.json() == {"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
@@ -92,6 +98,7 @@ def test_read_user():
 def test_update_user():
     response = client.put(
         "/users/jbrodriguez@fi.uba.ar",
+        headers={"Authorization":"1234"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "user_type": "admin",
@@ -105,7 +112,7 @@ def test_update_user():
                                 "user_type": "admin",
                                 "is_active":True
                                 }
-    get_response = client.get('/users/jbrodriguez@fi.uba.ar')
+    get_response = client.get('/users/jbrodriguez@fi.uba.ar', headers={"Authorization":"1234"})
     assert response.json() == {"email": "jbrodriguez@fi.uba.ar",
                                 "id":1,
                                 "first_name": "Juan",
@@ -115,7 +122,7 @@ def test_update_user():
                                 }
 
 def test_delete_user():
-    response = client.delete("/users/jbrodriguez@fi.uba.ar")
+    response = client.delete("/users/jbrodriguez@fi.uba.ar", headers={"Authorization":"1234"})
     assert response.status_code == 204
     get_response = client.get('/users/jbrodriguez@fi.uba.ar')
     assert get_response.status_code == 404
