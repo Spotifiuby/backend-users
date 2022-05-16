@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Spotifiuby/backend-users/branch/main/graph/badge.svg?token=nGGJVRVXdi)](https://codecov.io/gh/Spotifiuby/backend-users)
+
 # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Setup](#setup)
