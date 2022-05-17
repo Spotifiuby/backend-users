@@ -67,6 +67,19 @@ def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_d
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return updated_user
 
+@app.get("/users/ilike/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
+def read_users_ilike(skip: int = 0,
+                     limit: int = 100,
+                     email: str = "",
+                     first_name: str = "",
+                     last_name: str = "",
+                     user_type: str = "",
+                     is_active: bool = True,
+                     db: Session = Depends(get_db),
+                     api_key: APIKey = Depends(get_api_key)):
+    users = crud.get_users_ilike(db, skip, limit, email, first_name, last_name, user_type, is_active)
+    return users
+
 # To run locally
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)

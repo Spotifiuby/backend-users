@@ -121,6 +121,29 @@ def test_update_user():
                                 "is_active":True
                                 }
 
+def test_read_users_ilike_existent():
+    response = client.get(
+        "/users/ilike/?skip=0&limit=100&is_active=true&first_name=Jua",
+        headers={"X-API-Key":"1234"}
+    )
+    print (response.json())
+    assert response.status_code == 200
+    assert response.json() == [{"email": "jbrodriguez@fi.uba.ar",
+                                "id":1,
+                                "first_name": "Juan",
+                                "last_name": "Rodriguez",
+                                "user_type": "admin",
+                                "is_active":True
+                                }]
+
+def test_read_users_ilike_notfound():
+    response = client.get(
+        "/users/ilike/?skip=0&limit=100&user_type=L&is_active=false",
+        headers={"X-API-Key":"1234"}
+    )
+    assert response.status_code == 200
+    assert response.json() == []
+
 def test_delete_user():
     response = client.delete("/users/jbrodriguez@fi.uba.ar", headers={"X-API-Key":"1234"})
     assert response.status_code == 204
