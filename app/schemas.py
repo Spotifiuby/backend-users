@@ -2,7 +2,6 @@
 from typing import Optional
 from pydantic import BaseModel
 from enum import Enum
-import datetime
 
 class TypeEnum(str, Enum):
     uploader = "uploader"
@@ -16,12 +15,12 @@ class UserCreate(UserBase):
     first_name: Optional[str]
     last_name: Optional[str]
     user_type: TypeEnum
-    date_created: datetime.datetime
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     user_type: Optional[TypeEnum]
+    is_active: Optional[bool]
 
 class User(UserBase):
     id: int

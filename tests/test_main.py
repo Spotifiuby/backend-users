@@ -121,9 +121,9 @@ def test_update_user():
                                 "is_active":True
                                 }
 
-def test_read_users_ilike_existent():
+def test_read_users_search_existent():
     response = client.get(
-        "/users/ilike/?skip=0&limit=100&is_active=true&first_name=Jua",
+        "/users/?skip=0&limit=100&is_active=true&first_name=Jua",
         headers={"X-API-Key":"1234"}
     )
     print (response.json())
@@ -136,9 +136,9 @@ def test_read_users_ilike_existent():
                                 "is_active":True
                                 }]
 
-def test_read_users_ilike_notfound():
+def test_read_users_search_notfound():
     response = client.get(
-        "/users/ilike/?skip=0&limit=100&user_type=L&is_active=false",
+        "/users/?skip=0&limit=100&user_type=L&is_active=false",
         headers={"X-API-Key":"1234"}
     )
     assert response.status_code == 200

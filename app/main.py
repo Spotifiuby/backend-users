@@ -44,8 +44,17 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), api_key
     return crud.create_user(db=db, user=user)
 
 @app.get("/users/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+def read_users( skip: int = 0,
+                limit: int = 100,
+                email: str = "",
+                first_name: str = "",
+                last_name: str = "",
+                user_type: str = "",
+                is_active: bool = True,
+                db: Session = Depends(get_db),
+                api_key: APIKey = Depends(get_api_key)
+                ):
+    users = crud.get_users(db, skip, limit, email, first_name, last_name, user_type, is_active)
     return users
 
 @app.get("/users/{email}", response_model=schemas.User, status_code=status.HTTP_200_OK)
@@ -66,19 +75,6 @@ def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_d
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return updated_user
-
-@app.get("/users/ilike/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
-def read_users_ilike(skip: int = 0,
-                     limit: int = 100,
-                     email: str = "",
-                     first_name: str = "",
-                     last_name: str = "",
-                     user_type: str = "",
-                     is_active: bool = True,
-                     db: Session = Depends(get_db),
-                     api_key: APIKey = Depends(get_api_key)):
-    users = crud.get_users_ilike(db, skip, limit, email, first_name, last_name, user_type, is_active)
-    return users
 
 # To run locally
 if __name__ == '__main__':

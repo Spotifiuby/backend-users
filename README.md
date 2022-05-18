@@ -3,6 +3,7 @@
 # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Setup](#setup)
+- [Database Versions](#database-versions)
 - [Environment Variables](#environment-variables)
 - [Tests](#tests)
 - [Deploy](#deploy)
@@ -31,6 +32,13 @@ If during development you add any dependencies, remember to run:
 ``` 
 pip freeze > requirements.txt
 ```
+
+# Database Versions
+If there is a change on the alembic/versions directory, you should run the following command to update your db to the last state:
+```
+alembic upgrade head
+```
+If you already have some data in it, and there are changes adding columns not nullable, maybe you will have to delete those records to avoid errors.
 
 # Environment Variables
 To set custom environment variables, ou should add them in the run command.
