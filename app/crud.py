@@ -48,6 +48,7 @@ def updated_user(db: Session, email: str, user: schemas.UserUpdate):
         models.User.first_name: user.first_name if user.first_name else db_user.first_name,
         models.User.last_name: user.last_name if user.last_name else db_user.last_name,
         models.User.user_type: user.user_type if user.user_type else db_user.user_type,
+        models.User.is_active: user.is_active if user.is_active != None else db_user.is_active,
     }
     db.query(models.User).filter(models.User.email == email).update(values)
     db.commit()
