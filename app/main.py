@@ -50,7 +50,7 @@ def read_users( skip: int = 0,
                 first_name: str = "",
                 last_name: str = "",
                 user_type: str = "",
-                is_active: bool = True,
+                is_active: bool = None,
                 db: Session = Depends(get_db),
                 api_key: APIKey = Depends(get_api_key)
                 ):

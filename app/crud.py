@@ -15,15 +15,18 @@ def get_users( db,
                first_name: str = "",
                last_name: str = "",
                user_type: str = "",
-               is_active: bool = True
+               is_active: bool = None
                ):
-    return db.query(models.User).filter(
+    
+    q = db.query(models.User).filter(
         models.User.email.ilike("%{}%".format(email)),
         models.User.first_name.ilike("%{}%".format(first_name)),
         models.User.last_name.ilike("%{}%".format(last_name)),
-        models.User.user_type.ilike("%{}%".format(user_type)),
-        models.User.is_active == is_active
-        ).offset(skip).limit(limit).all()
+        models.User.user_type.ilike("%{}%".format(user_type))
+        ) 
+    if is_active is not None:
+        q = q.filter(models.User.is_active == is_active)
+    return q.offset(skip).limit(limit).all()
 
 def create_user(db:Session, user: schemas.UserCreate):
     db_user = models.User(email=user.email, first_name=user.first_name, last_name=user.last_name, user_type=user.user_type)
@@ -48,7 +51,7 @@ def updated_user(db: Session, email: str, user: schemas.UserUpdate):
         models.User.first_name: user.first_name if user.first_name else db_user.first_name,
         models.User.last_name: user.last_name if user.last_name else db_user.last_name,
         models.User.user_type: user.user_type if user.user_type else db_user.user_type,
-        models.User.is_active: user.is_active if user.is_active != None else db_user.is_active,
+        models.User.is_active: user.is_active if user.is_active is not None else db_user.is_active,
     }
     db.query(models.User).filter(models.User.email == email).update(values)
     db.commit()
