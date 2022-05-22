@@ -1,17 +1,23 @@
 """coding=utf-8."""
 from typing import List
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, status, Security
+from fastapi import Depends, FastAPI, HTTPException, status, Security, Header
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 from .settings import Settings
+from logging.config import dictConfig
+from .config.log_conf import log_config
+from .utils.utils import log_request_body
 
 models.Base.metadata.create_all(bind=engine)
 
 settings = Settings()
+
+dictConfig(log_config)
 
 app = FastAPI()
 
@@ -37,14 +43,15 @@ async def get_api_key(
         raise HTTPException(status_code=403)
 
 @app.post("/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None)):
+    log_request_body(x_request_id, {"user": user})
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email %s already registered" % user.email)
     return crud.create_user(db=db, user=user)
 
 @app.get("/users/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
-def read_users( skip: int = 0,
+async def read_users( skip: int = 0,
                 limit: int = 100,
                 email: str = "",
                 first_name: str = "",
@@ -58,19 +65,20 @@ def read_users( skip: int = 0,
     return users
 
 @app.get("/users/{email}", response_model=schemas.User, status_code=status.HTTP_200_OK)
-def read_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
+async def read_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     db_user = crud.get_user(db, email=email)
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return db_user
 
 @app.delete("/users/{email}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
+async def delete_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     # _check_vlaid_user_id(user_id)
     r = crud.delete_user(db, email=email)  
 
 @app.put("/users/{email}", response_model=schemas.User)
-def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
+async def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None)):
+    log_request_body(x_request_id, {"user-email": email, "user-update": user})
     updated_user = crud.updated_user(db=db, email=email, user=user)
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
