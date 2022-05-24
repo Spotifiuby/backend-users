@@ -35,7 +35,7 @@ client = TestClient(app)
 def test_create_user():
     response = client.post(
         "/users/",
-        headers={"X-API-Key":"1234"},
+        headers={"X-API-Key":"1234", "x-user-id": "adminusertoken"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
@@ -56,7 +56,7 @@ def test_read_main():
 def test_create_existing_user():
     response = client.post(
         "/users/",
-        headers={"X-API-Key":"1234"},
+        headers={"X-API-Key":"1234", "x-user-id": "adminusertoken"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "first_name": "Juan",
@@ -98,7 +98,7 @@ def test_read_user():
 def test_update_user():
     response = client.put(
         "/users/jbrodriguez@fi.uba.ar",
-        headers={"X-API-Key":"1234"},
+        headers={"X-API-Key":"1234", "x-user-id": "adminusertoken"},
         json={
             "email": "jbrodriguez@fi.uba.ar",
             "user_type": "admin",

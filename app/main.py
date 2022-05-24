@@ -11,7 +11,7 @@ from .database import SessionLocal, engine
 from .settings import Settings
 from logging.config import dictConfig
 from .config.log_conf import log_config
-from .utils.utils import log_request_body
+from .utils.utils import log_request_body, handle_user_permission
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -43,8 +43,9 @@ async def get_api_key(
         raise HTTPException(status_code=403)
 
 @app.post("/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None)):
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None), x_user_id: Optional[str] = Header(None)):
     log_request_body(x_request_id, {"user": user})
+    handle_user_permission(x_user_id, db=db, user=user)
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email %s already registered" % user.email)
@@ -77,8 +78,9 @@ async def delete_user(email: str, db: Session = Depends(get_db), api_key: APIKey
     r = crud.delete_user(db, email=email)  
 
 @app.put("/users/{email}", response_model=schemas.User)
-async def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None)):
+async def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None), x_user_id: Optional[str] = Header(None)):
     log_request_body(x_request_id, {"user-email": email, "user-update": user})
+    handle_user_permission(x_user_id, db=db, user=user, email=email)
     updated_user = crud.updated_user(db=db, email=email, user=user)
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
