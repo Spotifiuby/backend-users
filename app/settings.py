@@ -1,7 +1,8 @@
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    API_KEY: str = ""
+    BACKOFFICE_API_KEY: str = ""
+    NATIVE_APP_API_KEY: str = ""
     ENV: str = "Tests"
     DB_USER: str = "bauti"
     DB_PWD: str = "pass"
