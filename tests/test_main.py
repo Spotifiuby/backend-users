@@ -145,7 +145,7 @@ def test_read_users_search_notfound():
     assert response.json() == []
 
 def test_delete_user():
-    response = client.delete("/users/jbrodriguez@fi.uba.ar", headers={"X-API-Key":"1234"})
+    response = client.delete("/users/jbrodriguez@fi.uba.ar", headers={"X-API-Key":"1234", "x-user-id": "adminusertoken"})
     assert response.status_code == 204
     get_response = client.get('/users/jbrodriguez@fi.uba.ar')
     assert get_response.status_code == 404

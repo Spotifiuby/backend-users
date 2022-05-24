@@ -16,10 +16,10 @@ def log_request_body(request_id, body):
 async def _log_request_body(request_id, body):
     logger.info(f"Request: {request_id} - Body: {body}")
 
-def handle_user_permission(user_id: str, db: Session, user, email = None):
+def handle_user_permission(user_id: str, db: Session, user = None, email = None):
     if user_id == "adminusertoken": return True
     requester = get_user_by_email(db, user_id)
-    if user.user_type == TypeEnum.admin and requester.user_type != TypeEnum.admin:
+    if user and user.user_type == TypeEnum.admin and requester.user_type != TypeEnum.admin:
         raise HTTPException(status_code=403)
     email = email if email else user.email
     if email != user_id and requester.user_type != TypeEnum.admin:

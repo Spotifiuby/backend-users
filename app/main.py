@@ -73,8 +73,8 @@ async def read_user(email: str, db: Session = Depends(get_db), api_key: APIKey =
     return db_user
 
 @app.delete("/users/{email}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
-    # _check_vlaid_user_id(user_id)
+async def delete_user(email: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key), x_request_id: Optional[str] = Header(None), x_user_id: Optional[str] = Header(None)):
+    handle_user_permission(x_user_id, db=db, email=email)
     r = crud.delete_user(db, email=email)  
 
 @app.put("/users/{email}", response_model=schemas.User)
