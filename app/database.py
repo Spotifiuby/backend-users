@@ -3,6 +3,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .settings import Settings
+import os
+import pymongo
+import pymongo_inmemory
+from dotenv import load_dotenv
+
+load_dotenv()
 
 settings = Settings()
 
@@ -25,3 +31,13 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+# Mongo
+if os.getenv("CURRENT_ENVIRONMENT") == "production":
+    _client = pymongo.MongoClient(
+        f"mongodb+srv://{os.getenv('MONGODB_USER')}:{os.getenv('MONGODB_PASSWD')}@backend-songs.yhk0y.mongodb.net"
+        f"/backend-songs?retryWrites=true&w=majority")
+    conn = _client.prod
+else:
+    _client = pymongo_inmemory.MongoClient()
+    conn = _client.testdb

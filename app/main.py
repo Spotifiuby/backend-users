@@ -6,6 +6,7 @@ from fastapi.security.api_key import APIKeyHeader, APIKey
 from sqlalchemy.orm import Session
 from typing import Optional
 
+from app.subscriptions.controller import subscriptions_routes
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 from .settings import Settings
@@ -86,6 +87,8 @@ async def update_user(email:str, user: schemas.UserUpdate, db: Session = Depends
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return updated_user
+
+app.include_router(subscriptions_routes)
 
 # To run locally
 if __name__ == '__main__':
