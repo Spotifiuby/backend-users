@@ -49,7 +49,7 @@ async def create_subscription(body: UserSubscriptionRequest,
                           status_code=fastapi.status.HTTP_200_OK)
 async def get_subscription(user_id: str,
                            x_user_id: Optional[str] = fastapi.Header(None),
-                           x_request_id: Optional[str] = fastapi.Header(None),
+                           __: Optional[str] = fastapi.Header(None),
                            _: APIKey = Depends(get_api_key),
                            db: Session = Depends(get_db)):
     handle_user_permission(x_user_id, db, email=user_id)
@@ -59,7 +59,7 @@ async def get_subscription(user_id: str,
 @subscriptions_routes.delete("/users/{user_id}/subscriptions", tags=["Subscriptions"], status_code=fastapi.status.HTTP_200_OK)
 async def delete_subscription(user_id: str,
                               x_user_id: Optional[str] = fastapi.Header(None),
-                              x_request_id: Optional[str] = fastapi.Header(None),
+                              __: Optional[str] = fastapi.Header(None),
                               _: APIKey = Depends(get_api_key),
                               db: Session = Depends(get_db)):
     handle_user_permission(x_user_id, db, email=user_id)
