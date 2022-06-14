@@ -33,7 +33,7 @@ async def get_api_key(api_key_header: str = Security(APIKeyHeader(name="X-API-Ke
 subscriptions_routes = fastapi.APIRouter()
 
 
-@subscriptions_routes.post("/subscriptions", response_model=UserSubscriptionResponse, tags=["Subscriptions"],
+@subscriptions_routes.post("/users/subscriptions", response_model=UserSubscriptionResponse, tags=["Subscriptions"],
                            status_code=fastapi.status.HTTP_201_CREATED)
 async def create_subscription(body: UserSubscriptionRequest,
                               x_user_id: Optional[str] = fastapi.Header(None),
@@ -45,12 +45,22 @@ async def create_subscription(body: UserSubscriptionRequest,
     return service.create(body)
 
 
-@subscriptions_routes.get("/subscriptions/{user_id}", response_model=UserSubscriptionResponse, tags=["Subscriptions"],
+@subscriptions_routes.get("/users/{user_id}/subscriptions", response_model=UserSubscriptionResponse, tags=["Subscriptions"],
                           status_code=fastapi.status.HTTP_200_OK)
-async def create_subscription(user_id: str,
+async def get_subscription(user_id: str,
+                           x_user_id: Optional[str] = fastapi.Header(None),
+                           x_request_id: Optional[str] = fastapi.Header(None),
+                           _: APIKey = Depends(get_api_key),
+                           db: Session = Depends(get_db)):
+    handle_user_permission(x_user_id, db, email=user_id)
+    return service.get(user_id)
+
+
+@subscriptions_routes.delete("/users/{user_id}/subscriptions", tags=["Subscriptions"], status_code=fastapi.status.HTTP_200_OK)
+async def delete_subscription(user_id: str,
                               x_user_id: Optional[str] = fastapi.Header(None),
                               x_request_id: Optional[str] = fastapi.Header(None),
                               _: APIKey = Depends(get_api_key),
                               db: Session = Depends(get_db)):
     handle_user_permission(x_user_id, db, email=user_id)
-    return service.get(user_id)
+    return service.delete(user_id)

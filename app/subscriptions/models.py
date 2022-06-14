@@ -1,23 +1,23 @@
 import datetime
 
 from fastapi import HTTPException
-from moneyed import Money, USD
+from decimal import Decimal
 from pydantic import BaseModel
 
 
 # Subscriptions
 class SubscriptionType:
     name: str
-    price: Money
+    price: Decimal
 
-    def __init__(self, name: str, price: Money):
+    def __init__(self, name: str, price: Decimal):
         self.name = name
         self.price = price
 
 
-basic = SubscriptionType("Basic", Money(1, USD))
-pro = SubscriptionType("Pro", Money(10, USD))
-premium = SubscriptionType("Premium", Money(100, USD))
+basic = SubscriptionType("Basic", Decimal("0.000001"))
+pro = SubscriptionType("Pro", Decimal("0.000002"))
+premium = SubscriptionType("Premium", Decimal("0.000003"))
 
 
 def _validate_subscription_type_id(t: str):
