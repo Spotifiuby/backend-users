@@ -41,7 +41,7 @@ def create_user(db:Session, user: schemas.UserCreate):
     body = {
         'userId': user.email
     }
-    x = requests.post(settings.PAYMENT_URL, json = body)
+    x = requests.post(settings.PAYMENT_URL + '/wallet', json = body)
     return db_user
 
 def delete_user(db:Session, email: str):
