@@ -9,3 +9,4 @@ class Settings(BaseSettings):
     DB_HOST: str = "ec2-52-5-110-35.compute-1.amazonaws.com"
     DB_PORT: str = "5432"
     DB_NAME: str = "d28amjt0el1ome"
+    PAYMENT_URL: str = "https://spotifiuby-payment-service.herokuapp.com"

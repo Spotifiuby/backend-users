@@ -1,6 +1,11 @@
 """coding=utf-8."""
 from sqlalchemy.orm import Session
 from . import models, schemas
+from .settings import Settings
+import requests
+
+settings = Settings()
+
 
 def get_user(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
@@ -33,6 +38,10 @@ def create_user(db:Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    body = {
+        'userId': user.email
+    }
+    x = requests.post(settings.PAYMENT_URL, json = body)
     return db_user
 
 def delete_user(db:Session, email: str):
