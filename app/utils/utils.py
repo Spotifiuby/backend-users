@@ -21,7 +21,7 @@ async def _log_request_body(request_id, body):
 
 def handle_user_permission(user_id: str, db: Session, user=None, email=None):
     if user_id == "adminusertoken": return True
-    if user.user_type in ["listener", "uploader"] and user_id == user.email: return True
+    if user and user.user_type in ["listener", "uploader"] and user_id == user.email: return True
     requester = get_user_by_email(db, user_id)
     if not requester:
         raise HTTPException(status_code=403, detail="Invalid x-user-id")
