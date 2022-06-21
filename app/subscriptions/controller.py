@@ -64,3 +64,17 @@ async def delete_subscription(user_id: str,
                               db: Session = Depends(get_db)):
     handle_user_permission(x_user_id, db, email=user_id)
     return service.delete(user_id)
+
+
+@subscriptions_routes.put("/users/{user_id}/subscriptions", response_model=UserSubscriptionResponse,
+                          tags=["Subscriptions"],
+                          status_code=fastapi.status.HTTP_200_OK)
+async def modify_subscription(user_id: str,
+                              body: UserSubscriptionRequest,
+                              x_user_id: Optional[str] = fastapi.Header(None),
+                              x_request_id: Optional[str] = fastapi.Header(None),
+                              _: APIKey = Depends(get_api_key),
+                              db: Session = Depends(get_db)):
+    log_request_body(x_request_id, body)
+    handle_user_permission(x_user_id, db, email=user_id)
+    return service.modify(body)

@@ -7,8 +7,6 @@ from app.subscriptions.models import UserSubscriptionRequest, UserSubscriptionMo
 def create(body: UserSubscriptionRequest):
     _validate_subscription_type_id(body.subscription_type_id)
 
-    # TODO: Validar que el usuario exista
-
     m = conn.subscriptions.find_one({"user_id": body.user_id})
     if m:
         raise HTTPException(status_code=400, detail="User already subscribed.")
@@ -32,3 +30,10 @@ def delete(user_id: str):
     if not m:
         raise HTTPException(status_code=404, detail="Subscription not found for User.")
     m = conn.subscriptions.delete_one({"user_id": user_id})
+
+
+def modify(body: UserSubscriptionRequest):
+    _validate_subscription_type_id(body.subscription_type_id)
+
+    delete(body.user_id)
+    return create(body)
