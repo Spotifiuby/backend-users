@@ -8,7 +8,10 @@ settings = Settings()
 
 
 def get_user(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+    user = db.query(models.User).filter(models.User.email == email).first()
+    r = requests.get(settings.PAYMENT_URL + '/wallet/{email}')
+    user.wallet_address = r.json()['address']
+    return user
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()

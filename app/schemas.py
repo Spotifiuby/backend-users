@@ -28,6 +28,7 @@ class User(UserBase):
     last_name: str
     user_type: TypeEnum
     is_active: bool
+    wallet_address: Optional[str]
 
     class Config:
         orm_mode = True
