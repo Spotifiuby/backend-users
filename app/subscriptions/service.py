@@ -2,6 +2,12 @@ from fastapi import HTTPException
 
 from app.database import conn
 from app.subscriptions.models import UserSubscriptionRequest, UserSubscriptionModel, _validate_subscription_type_id
+from app.subscriptions.models import basic, pro, premium
+from app.settings import Settings
+import requests
+
+settings = Settings()
+
 
 
 def create(body: UserSubscriptionRequest):
@@ -14,7 +20,20 @@ def create(body: UserSubscriptionRequest):
     s = UserSubscriptionModel(body.user_id, body.subscription_type_id)
     conn.subscriptions.insert_one(s.to_dict())
 
-    # TODO: Procesar pago
+    price = 0
+    if basic.name == body.subscription_type_id:
+        price = basic.price
+    elif pro.name == body.subscription_type_id:
+        price = pro.price
+    elif premium.name == body.subscription_type_id:
+        price = premium.price
+    rBody = {
+        "amountInEthers": str(price),
+        "senderId": body.user_id,
+        }
+    r = requests.post(settings.PAYMENT_URL + "/deposit", json=rBody)
+    if r.status_code == 400 and r.json()['code'] == 'INSUFFICIENT_FUNDS':
+        raise HTTPException(status_code=400, detail="Insufficient Funds")
     return get(body.user_id)
 
 
