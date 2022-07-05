@@ -56,3 +56,19 @@ def modify(body: UserSubscriptionRequest):
 
     delete(body.user_id)
     return create(body)
+
+
+def save_token(user_id, token):
+    m = conn.tokens.find_one({"user_id": user_id})
+    if m:
+        conn.tokens.delete_one({"user_id": user_id})
+
+    conn.tokens.insert_one({"user_id": user_id, "token": token})
+
+
+def get_token(user_id):
+    m = conn.tokens.find_one({"user_id": user_id})
+    if m:
+        return {"user_id": m["user_id"], "token": m["token"]}
+    else:
+        return {}
